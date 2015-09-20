@@ -19,9 +19,11 @@ PlanktonMesh.prototype.addVertex  = function(x,y,z){
     return newVertex;
 };
 
-PlanktonMesh.prototype.addHalfEdge  = function(){
-    var newEdge = new PlanktonHalfEdge()
-    this.halfEdges.push(new PlanktonHalfEdge())
+PlanktonMesh.prototype.addEdgePair  = function(start, end, face){
+    var firstEdge = new PlanktonHalfEdge(start, face);
+    this.halfEdges.push(firstEdge);
+    var secondEdge = new PlanktonHalfEdge(end,-1);
+    this.halfEdges.push(secondEdge);
 };
 
 //this is where the action happens
