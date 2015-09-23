@@ -12,5 +12,5 @@ function PlanktonVertex(x,y,z, length) {
     this.z = z;
     this.index = length;
 
-    this.halfEdge = -1;
+    this.halfEdge = null;
 }

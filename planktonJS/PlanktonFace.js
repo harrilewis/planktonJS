@@ -10,4 +10,3 @@ function PlanktonFace(edge, length) {
     this.firstHalfEdge = edge;
     this.index = length;
 }
-
