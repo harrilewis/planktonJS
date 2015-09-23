@@ -6,11 +6,11 @@
  * Represents a vertex.
  * @constructor
  */
-function PlanktonVertex(x,y,z) {
+function PlanktonVertex(x,y,z, length) {
     this.x = x;
     this.y = y;
     this.z = z;
+    this.index = length;
 
-    //could we simply not create this, wait until it is set and check for vertex.hasOwnProperty(halfEdge)?
     this.halfEdge = -1;
 }

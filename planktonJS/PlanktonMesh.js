@@ -14,31 +14,30 @@ function PlanktonMesh() {
 }
 
 PlanktonMesh.prototype.addVertex  = function(x,y,z){
-    var newVertex = new PlanktonVertex(x,y,x);
+    var newVertex = new PlanktonVertex(x,y,x, this.vertices.length);
     this.vertices.push(newVertex);
     return newVertex;
 };
 
 PlanktonMesh.prototype.addEdgePair  = function(start, end, face){
-    var firstEdge = new PlanktonHalfEdge(start, face);
+    var firstEdge = new PlanktonHalfEdge(start, face, this.halfEdges.length);
     this.halfEdges.push(firstEdge);
-    var secondEdge = new PlanktonHalfEdge(end,-1);
+    var secondEdge = new PlanktonHalfEdge(end,-1, this.halfEdges.length);
     this.halfEdges.push(secondEdge);
 };
 
-//lifted from pearswj/mesh.js
+
 PlanktonMesh.prototype.addFace  = function(vertices){
     var n = vertices.length;
 
-    // don't allow degenerate faces
+    // don't allow degenerate faces - must be at least a triangle..
     if (n < 3) {
         return -1;
     }
 
     // check that all vertex indices exist in this mesh
-    //check this still makes sense - i will never be <0! confusion between indices and vertices..
     for (var i = 0; i < n; i++) {
-        if (i < 0 || i >= mesh.vertices.length) {
+        if (vertices[i] < 0 || vertices[i] >= this.vertices.length) {
             return -2;
         }
     }
@@ -49,6 +48,7 @@ PlanktonMesh.prototype.addFace  = function(vertices){
     var loop = [];
     var is_new = [];
     for (var i = 0; i < n; i++) {
+        //iterate through each proposed edge
         var h = findHalfedge(vertices[i], vertices[(i + 1) % n]);
         if (h.adj >= 0) {
             return -3;
@@ -121,4 +121,19 @@ PlanktonMesh.prototype.addFace  = function(vertices){
         halfedge: loop[0]
     });
 
+};
+
+//function called in add face
+//return the halfedge if it exists or -1 if not
+PlanktonMesh.prototype.findHalfedge = function() {
+
+}
+
+PlanktonMesh.prototype.getHalfEdges = function(face){
+    //TODO create circulator to return halfedges
+};
+
+PlanktonMesh.prototype.getFaceVertices = function(face){
+    //TODO create circulator to return vertices
+    //probably calls gethalfedges and then grabs the vertices?
 };
