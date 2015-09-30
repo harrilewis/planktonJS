@@ -24,6 +24,7 @@ PlanktonMesh.prototype.addEdgePair  = function(start, end, face){
     this.halfEdges.push(firstEdge);
     var secondEdge = new PlanktonHalfEdge(end, null, this.halfEdges.length);
     this.halfEdges.push(secondEdge);
+    //should this return the edges?
 };
 
 PlanktonMesh.prototype.addFaceFromIndices = function(indices) {
@@ -48,14 +49,14 @@ PlanktonMesh.prototype.addFace  = function(vertices){
         //iterate through each proposed edge
         var proposedEdge = this.findHalfedge(vertices[i], vertices[(i + 1) % n]);
         //could this cause a problem with undefined? if it is a new edge I think it will return undefined..
-        if (proposedEdge.adjacentFace != null) {
+        if (proposedEdge.adjacentFace !== null) {
             //non-manifold therefore - for half edge there is only ever one edge with a certain sequence of vertices
             return -2;
         }
         loop.push(proposedEdge);
         //findHalfedge returned -1 if it was new
         //again need to check what is returned when an edge is compared to -1..
-        is_new.push(proposedEdge == -1);
+        is_new.push(proposedEdge === -1);
     }
 
     //create the face here.. so I can link it to an existing half edge below.
@@ -123,6 +124,8 @@ PlanktonMesh.prototype.addFace  = function(vertices){
             mesh.vertices[vertices[ii]].halfedge = loop[i] + 1;
         }
     }
+
+    //should this return the face?
 };
 
 //function called in add face

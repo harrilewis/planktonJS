@@ -12,6 +12,7 @@ function convertPlanktonToThreeGeometry(planktonMesh) {
 
     for (var i=0; i<planktonMesh.faces.length; i++) {
         var vertices = planktonMesh.getFaceVertices(planktonMesh.faces[i]);
-        //do some sort of triangle fan thing to make triangular faces.
+        //calculate the average of the vertices and make a triangle fan around it.
+        //would be good to somehow maintain the vertex numbering and even face numbering from the planktonMesh..
     }
 }
