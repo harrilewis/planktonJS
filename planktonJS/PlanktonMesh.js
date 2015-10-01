@@ -13,6 +13,13 @@ function PlanktonMesh() {
     this.faces = [];
 }
 
+/**
+ * @method addVertex
+ * @param {number} x  - the distance along the x-axis
+ * @param {number} y  - the distance along the y-axis
+ * @param {number} z  - the distance along the z-axis
+ * @returns {PlanktonVertex} - the added vertex
+ */
 PlanktonMesh.prototype.addVertex  = function(x,y,z){
     var newVertex = new PlanktonVertex(x,y,x, this.vertices.length);
     this.vertices.push(newVertex);
@@ -24,7 +31,8 @@ PlanktonMesh.prototype.addEdgePair  = function(start, end, face){
     this.halfEdges.push(firstEdge);
     var secondEdge = new PlanktonHalfEdge(end, null, this.halfEdges.length);
     this.halfEdges.push(secondEdge);
-    //should this return the edges?
+    //return an array containing the two edges
+    return [firstEdge, secondEdge];
 };
 
 PlanktonMesh.prototype.addFaceFromIndices = function(indices) {
