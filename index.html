@@ -12,13 +12,14 @@
 
 <script>
 
-   var testMesh = new PlanktonMesh();
-    testMesh.addVertex(0,0,0);
-    testMesh.addVertex(10,10,10);
-    testMesh.addVertex(10,10,0);
+    var verts = [];
 
-    testMesh.addFace()
+    var testMesh = new PlanktonMesh();
+    verts.push(testMesh.addVertex(0,0,0));
+    verts.push(testMesh.addVertex(10,10,10));
+    verts.push(testMesh.addVertex(10,10,0));
 
+    testMesh.addFace();
 </script>
 </body>
 </html>

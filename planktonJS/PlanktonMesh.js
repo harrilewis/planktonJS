@@ -21,7 +21,7 @@ function PlanktonMesh() {
  * @returns {PlanktonVertex} - the added vertex
  */
 PlanktonMesh.prototype.addVertex  = function(x,y,z){
-    var newVertex = new PlanktonVertex(x,y,x, this.vertices.length);
+    var newVertex = new PlanktonVertex(x,y,z, this.vertices.length);
     this.vertices.push(newVertex);
     return newVertex;
 };
@@ -31,6 +31,9 @@ PlanktonMesh.prototype.addEdgePair  = function(start, end, face){
     this.halfEdges.push(firstEdge);
     var secondEdge = new PlanktonHalfEdge(end, null, this.halfEdges.length);
     this.halfEdges.push(secondEdge);
+    //set the opposites/pairs. They should always be the nest or previous in the edge list but nice to be able to get them directly
+    firstEdge.oppositeHalfEdge = secondEdge;
+    secondEdge.oppositeHalfEdge = firstEdge;
     //return an array containing the two edges
     return [firstEdge, secondEdge];
 };
@@ -41,11 +44,16 @@ PlanktonMesh.prototype.addFaceFromIndices = function(indices) {
 };
 
 PlanktonMesh.prototype.addFace  = function(vertices){
-    var n = vertices.length;
 
+    //make sure something has been sent in
+    if (vertices === undefined) {
+        return -1;
+    }
+
+    var n = vertices.length;
     // don't allow degenerate faces - must be at least a triangle..
     if (n < 3) {
-        return -1;
+        return -2;
     }
 
     // for each pair of vertices, check for an existing halfedge
@@ -59,7 +67,7 @@ PlanktonMesh.prototype.addFace  = function(vertices){
         //could this cause a problem with undefined? if it is a new edge I think it will return undefined..
         if (proposedEdge.adjacentFace !== null) {
             //non-manifold therefore - for half edge there is only ever one edge with a certain sequence of vertices
-            return -2;
+            return -3;
         }
         loop.push(proposedEdge);
         //findHalfedge returned -1 if it was new
@@ -127,7 +135,9 @@ PlanktonMesh.prototype.addFace  = function(vertices){
         mesh.halfedges[loop[i]].next = loop[ii];
         mesh.halfedges[loop[ii]].prev = loop[i];
 
+        //is this where you set the halfedge for the vertex? - think so.
         // ensure vertex->outgoing is boundary if vertex is boundary
+        //see notes in planktonVertex - this must be the out going edge without a face yet..
         if (is_new[i]) { // first is new
             mesh.vertices[vertices[ii]].halfedge = loop[i] + 1;
         }
@@ -138,9 +148,8 @@ PlanktonMesh.prototype.addFace  = function(vertices){
 
 //function called in add face
 //return the halfedge if it exists or -1 if not
-//haven't tested this
 PlanktonMesh.prototype.findHalfedge = function(start, end) {
-    var edgesAroundThisVertex = getVertexHalfEdges(start);
+    var edgesAroundThisVertex = this.getVertexHalfEdges(start);
     for (var i=0;i<edgesAroundThisVertex.length;i++)
     {
         if (end == edgesAroundThisVertex[i].oppositeHalfEdge.start)
@@ -149,15 +158,45 @@ PlanktonMesh.prototype.findHalfedge = function(start, end) {
     return -1;
 };
 
+//get all the outgoing halfedges from a vertex
 PlanktonMesh.prototype.getVertexHalfEdges = function(vertex) {
-    //TODO create circulator to return all halfedges around a vertex in an array
+    var halfEdges =[];
+
+    //check if there are no edges yet attached to this vertex
+    if(vertex.halfedge === null) {
+        return halfEdges;
+    }
+
+    //if there are loop round until you get back to the start or to a boundary
+    var edge = vertex.halfedge;
+    do {
+        halfEdges.push(edge);
+        edge = edge.oppositeHalfEdge.nextHalfEdge;
+    } while (edge != vertex.halfedge || edge.oppositeHalfEdge.adjacentFace ===null);
+    return halfEdges;
+};
+
+PlanktonMesh.prototype.circulateHalfEdge = function(startEdge) {
+    var halfEdges = [];
+    var edge = startEdge;
+    do {
+        halfEdges.push(edge);
+        edge = edge.nextHalfEdge;
+        if (edge == null) { throw "not a closed loop of edges"; }
+    } while (edge !== startEdge);
+    return halfEdges;
 };
 
 PlanktonMesh.prototype.getFaceHalfEdges = function(face){
-    //TODO create circulator to return halfedges array
+    return this.circulateHalfEdge(face.firstHalfEdge);
 };
 
 PlanktonMesh.prototype.getFaceVertices = function(face){
-    //TODO create circulator to return vertices array
-    //probably calls gethalfedges and then grabs the vertices?
+    var halfEdges =this.circulateHalfEdge(face.firstHalfEdge);
+    var vertices = [];
+    //testing out forEach. Perhaps just use a for loop though more consistent.
+    halfEdges.forEach(function(item) {
+        vertices.push(item.startVertex);
+    });
+    return vertices;
 };
