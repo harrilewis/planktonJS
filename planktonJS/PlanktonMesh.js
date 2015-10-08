@@ -143,7 +143,7 @@ PlanktonMesh.prototype.addFace  = function(vertices){
         }
     }
 
-    //should this return the face?
+    return newFace;
 };
 
 //function called in add face
@@ -159,6 +159,7 @@ PlanktonMesh.prototype.findHalfedge = function(start, end) {
 };
 
 //get all the outgoing halfedges from a vertex
+//if the above way of setting the halfedge belonging to a vertex works then the vertex.halfedge should always be the outer boundary edge going out of the node
 PlanktonMesh.prototype.getVertexHalfEdges = function(vertex) {
     var halfEdges =[];
 
