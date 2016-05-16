@@ -13,6 +13,12 @@ function PlanktonMesh() {
     this.faces = [];
 }
 
+PlanktonMesh.prototype.draw2d = function() {
+    for (var i = 0; i<this.vertices.length;i++) {
+        point(this.vertices[i].x,this.vertices[i].y);
+    }
+};
+
 /**
  * @method addVertex
  * @param {number} x  - the distance along the x-axis
@@ -193,7 +199,7 @@ PlanktonMesh.prototype.getFaceHalfEdges = function(face){
 };
 
 PlanktonMesh.prototype.getFaceVertices = function(face){
-    var halfEdges =this.circulateHalfEdge(face.firstHalfEdge);
+    var halfEdges = this.circulateHalfEdge(face.firstHalfEdge);
     var vertices = [];
     //testing out forEach. Perhaps just use a for loop though more consistent.
     halfEdges.forEach(function(item) {
