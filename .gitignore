@@ -1,0 +1,5 @@
+*.name
+.idea/encodings.xml
+.idea/misc.xml
+*.xml
+.idea/planktonJS.iml
