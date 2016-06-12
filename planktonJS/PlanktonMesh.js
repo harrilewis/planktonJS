@@ -13,6 +13,9 @@ function PlanktonMesh() {
     this.faces = [];
 }
 
+/**
+ * using p5.js to draw the mesh
+ */
 PlanktonMesh.prototype.draw2d = function() {
     for (var i = 0; i<this.vertices.length;i++) {
         point(this.vertices[i].x,this.vertices[i].y);
